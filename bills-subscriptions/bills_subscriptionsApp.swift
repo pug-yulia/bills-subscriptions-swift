@@ -6,12 +6,20 @@
 //
 
 import SwiftUI
-
+import SwiftData
 @main
 struct bills_subscriptionsApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            TabsScreen()
+            //HomeScreen()
+            //ContentView()
         }
+        .modelContainer(for:[
+            Category.self,
+            PaymentEntry.self,
+            PaymentOccurrence.self
+        ])
+        
     }
 }

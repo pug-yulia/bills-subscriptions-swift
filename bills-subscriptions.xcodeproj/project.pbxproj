@@ -30,6 +30,31 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		8F1E1A962F3DFD4C00695EB8 /* Screens */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Screens;
+			sourceTree = "<group>";
+		};
+		8F1E1A972F3DFD8100695EB8 /* ViewModels */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		8F1E1A982F3DFD9100695EB8 /* Documentation */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Documentation;
+			sourceTree = "<group>";
+		};
+		8F4ED9762F3A0CC7005EFA0A /* Models */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Models;
+			sourceTree = "<group>";
+		};
+		8F4ED98B2F3A1731005EFA0A /* Services */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Services;
+			sourceTree = "<group>";
+		};
 		8FEC2DF52F338DBC00661030 /* bills-subscriptions */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = "bills-subscriptions";
@@ -75,6 +100,11 @@
 		8FEC2DEA2F338DBC00661030 = {
 			isa = PBXGroup;
 			children = (
+				8F1E1A982F3DFD9100695EB8 /* Documentation */,
+				8F1E1A972F3DFD8100695EB8 /* ViewModels */,
+				8F1E1A962F3DFD4C00695EB8 /* Screens */,
+				8F4ED98B2F3A1731005EFA0A /* Services */,
+				8F4ED9762F3A0CC7005EFA0A /* Models */,
 				8FEC2DF52F338DBC00661030 /* bills-subscriptions */,
 				8FEC2E032F338DBE00661030 /* bills-subscriptionsTests */,
 				8FEC2E0D2F338DBE00661030 /* bills-subscriptionsUITests */,
@@ -108,6 +138,11 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				8F1E1A962F3DFD4C00695EB8 /* Screens */,
+				8F1E1A972F3DFD8100695EB8 /* ViewModels */,
+				8F1E1A982F3DFD9100695EB8 /* Documentation */,
+				8F4ED9762F3A0CC7005EFA0A /* Models */,
+				8F4ED98B2F3A1731005EFA0A /* Services */,
 				8FEC2DF52F338DBC00661030 /* bills-subscriptions */,
 			);
 			name = "bills-subscriptions";
