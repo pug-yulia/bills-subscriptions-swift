@@ -1,10 +1,10 @@
 import SwiftUI
 
-struct SettingsScreen: View {
+struct SubscriptionsScreen: View {
     var body: some View {
         ZStack {
             Color.white.ignoresSafeArea()
-            Text("Settings Screen")
+            Text("Subscriptions Screen")
                 .font(.largeTitle)
                 .fontWeight(.bold)
         }
