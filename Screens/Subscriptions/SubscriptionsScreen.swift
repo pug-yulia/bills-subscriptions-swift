@@ -1,12 +1,17 @@
 import SwiftUI
+import SwiftData
 
 struct SubscriptionsScreen: View {
+    @Query(filter: #Predicate<PaymentEntry> { $0.typeRaw == "subscription" },
+           sort: \PaymentEntry.dueDate, order: .reverse)
+    private var subs: [PaymentEntry]
+
     var body: some View {
-        ZStack {
-            Color.white.ignoresSafeArea()
-            Text("Subscriptions Screen")
-                .font(.largeTitle)
-                .fontWeight(.bold)
+        NavigationStack {
+            List(subs) { entry in
+                Text(entry.title)
+            }
+            .navigationTitle("Subscriptions")
         }
     }
 }
