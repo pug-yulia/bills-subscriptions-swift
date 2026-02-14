@@ -2,7 +2,8 @@ import SwiftData
 import SwiftUI
 
 struct HomeScreen: View {
-
+    @Binding var selectedTab: Tab
+    
     @Query(sort: \PaymentEntry.dueDate, order: .forward)
     private var entries: [PaymentEntry]
 
@@ -59,9 +60,7 @@ struct HomeScreen: View {
                     // Upcoming Bills
                     HomeSectionHeaderView(
                         title: "Upcoming Bills",
-                        onSeeAll: {
-                            // TODO: навигация в Bills tab (сделаем позже)
-                        }
+                        onSeeAll: { selectedTab = .bills }
                     )
 
                     if upcomingBills.isEmpty {
@@ -87,9 +86,7 @@ struct HomeScreen: View {
                     // Active Subscriptions
                     HomeSectionHeaderView(
                         title: "Active Subscriptions",
-                        onSeeAll: {
-                            // TODO: навигация в Subscriptions tab (сделаем позже)
-                        }
+                        onSeeAll: { selectedTab = .subscriptions }
                     )
 
                     if activeSubscriptions.isEmpty {

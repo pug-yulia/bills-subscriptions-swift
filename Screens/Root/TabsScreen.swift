@@ -1,8 +1,15 @@
 import SwiftUI
 
+enum Tab: Int {
+    case home = 0
+    case bills = 1
+    case subscriptions = 2
+    case settings = 3
+}
+
 struct TabsScreen: View {
 
-    @State private var selectedTab = 0
+    @State private var selectedTab: Tab = .home
     @State private var showAddPayment = false
 
     var body: some View {
@@ -11,36 +18,28 @@ struct TabsScreen: View {
             TabView(selection: $selectedTab) {
 
                 NavigationStack {
-                    HomeScreen()
+                    HomeScreen(selectedTab: $selectedTab)
                 }
-                .tabItem {
-                    Label("Home", systemImage: "house")
-                }
-                .tag(0)
+                .tabItem { Label("Home", systemImage: "house") }
+                .tag(Tab.home)
 
                 NavigationStack {
                     BillsScreen()
                 }
-                .tabItem {
-                    Label("Bills", systemImage: "doc.text")
-                }
-                .tag(1)
+                .tabItem { Label("Bills", systemImage: "doc.text") }
+                .tag(Tab.bills)
 
                 NavigationStack {
                     SubscriptionsScreen()
                 }
-                .tabItem {
-                    Label("Subscriptions", systemImage: "arrow.triangle.2.circlepath")
-                }
-                .tag(2)
+                .tabItem { Label("Subscriptions", systemImage: "arrow.triangle.2.circlepath") }
+                .tag(Tab.subscriptions)
 
                 NavigationStack {
                     SettingsScreen()
                 }
-                .tabItem {
-                    Label("Settings", systemImage: "gearshape")
-                }
-                .tag(3)
+                .tabItem { Label("Settings", systemImage: "gearshape") }
+                .tag(Tab.settings)
             }
 
             // Центральная синяя кнопка
