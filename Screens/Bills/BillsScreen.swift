@@ -9,14 +9,6 @@ struct BillsScreen: View {
         case all
         case uncategorized
         case category(UUID)
-
-        var title: String {
-            switch self {
-            case .all: return "All"
-            case .uncategorized: return "No category"
-            case .category: return "" // для category берём имя из Category
-            }
-        }
     }
 
     // MARK: - Date filter
@@ -76,16 +68,12 @@ struct BillsScreen: View {
                         .foregroundStyle(.gray)
                         .padding(.top, 40)
                 } else {
-                    VStack(spacing: 10) {
-                        ForEach(filteredBills) { entry in
-                            HomeRowItemView(
-                                iconSystemName: "bolt.fill",
-                                title: entry.title,
-                                subtitle: entry.category?.name ?? "—",
-                                rightText: Money.formatMinor(entry.amountMinor, currencyCode: entry.currencyCode)
-                            )
-                        }
-                    }
+                    PaymentEntriesListView(
+                        entries: filteredBills,
+                        emptyText: "No bills found",
+                        iconProvider: { _ in "bolt.fill" },
+                        subtitleProvider: { $0.category?.name ?? "—" }
+                    )
                 }
             }
             .padding(.horizontal, 16)
@@ -154,8 +142,7 @@ struct BillsScreen: View {
 
     private func filterByDate(_ source: [PaymentEntry]) -> [PaymentEntry] {
         let calendar = Calendar.current
-        let now = Date()
-        let today = calendar.startOfDay(for: now)
+        let today = calendar.startOfDay(for: Date())
 
         func inRange(_ d: Date, _ start: Date, _ endExclusive: Date) -> Bool {
             d >= start && d < endExclusive

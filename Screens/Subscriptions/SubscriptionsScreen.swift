@@ -41,17 +41,12 @@ struct SubscriptionsScreen: View {
                         .foregroundStyle(.gray)
                         .padding(.top, 40)
                 } else {
-                    VStack(spacing: 10) {
-                        ForEach(filteredSubs) { entry in
-                            let rule = (entry.repeatRuleRaw ?? "monthly")
-                            HomeRowItemView(
-                                iconSystemName: "repeat",
-                                title: entry.title,
-                                subtitle: ruleTitle(rule),
-                                rightText: "\(Money.formatMinor(entry.amountMinor, currencyCode: entry.currencyCode)) /\(ruleSuffix(rule))"
-                            )
-                        }
-                    }
+                    PaymentEntriesListView(
+                        entries: filteredSubs,
+                        emptyText: "No bills found",
+                        iconProvider: { _ in "bolt.fill" },
+                        subtitleProvider: { $0.category?.name ?? "—" }
+                    )
                 }
             }
             .padding(.horizontal, 16)

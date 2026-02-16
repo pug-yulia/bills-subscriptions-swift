@@ -68,19 +68,12 @@ struct HomeScreen: View {
                             .foregroundStyle(.gray)
                             .padding(.vertical, 6)
                     } else {
-                        VStack(spacing: 10) {
-                            ForEach(upcomingBills) { item in
-                                HomeRowItemView(
-                                    iconSystemName: "bolt.fill",
-                                    title: item.title,
-                                    subtitle: item.category?.name ?? "—",
-                                    rightText: formatMoneyMinor(
-                                        item.amountMinor,
-                                        currencyCode: item.currencyCode
-                                    )
-                                )
-                            }
-                        }
+                        PaymentEntriesListView(
+                            entries: upcomingBills,
+                            emptyText: "No bills found",
+                            iconProvider: { _ in "bolt.fill" },
+                            subtitleProvider: { $0.category?.name ?? "—" }
+                        )
                     }
 
                     // Active Subscriptions
@@ -94,18 +87,12 @@ struct HomeScreen: View {
                             .foregroundStyle(.gray)
                             .padding(.vertical, 6)
                     } else {
-                        VStack(spacing: 10) {
-                            ForEach(activeSubscriptions) { item in
-                                let rule = (item.repeatRuleRaw ?? "monthly")
-                                HomeRowItemView(
-                                    iconSystemName: "square.grid.2x2.fill",
-                                    title: item.title,
-                                    subtitle: rule,
-                                    rightText:
-                                        "\(formatMoneyMinor(item.amountMinor, currencyCode: item.currencyCode)) /\(ruleToUnit(rule))"
-                                )
-                            }
-                        }
+                        PaymentEntriesListView(
+                            entries: activeSubscriptions,
+                            emptyText: "No bills found",
+                            iconProvider: { _ in "bolt.fill" },
+                            subtitleProvider: { $0.category?.name ?? "—" }
+                        )
                     }
                 }
                 .padding(.horizontal, 16)

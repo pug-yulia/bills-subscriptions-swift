@@ -3,21 +3,22 @@ import SwiftData
 
 @Model
 final class PaymentEntry {
+
     @Attribute(.unique) var id: UUID
 
     var title: String
 
-    /// сумма в минимальных единицах (копейки/центы) — как в TS
+    /// сумма в минимальных единицах (копейки/центы)
     var amountMinor: Int64
 
-    /// "USD", "RUB" и т.д.
-    var currencyCode: String
+    /// 🔥 вместо currencyCode: связь на Currency
+    @Relationship var currency: Currency
 
     /// храним как String, чтобы SwiftData не капризничал
     var typeRaw: String
-    var repeatRuleRaw: String?   // может быть nil / null
+    var repeatRuleRaw: String?   // может быть nil
 
-    /// ближайшая дата платежа (dueDate ISO -> Date)
+    /// ближайшая дата платежа
     var dueDate: Date
 
     var note: String?
@@ -26,12 +27,14 @@ final class PaymentEntry {
     var createdAt: Date
     var updatedAt: Date
 
-    /// вместо categoryId: связь на Category
-    var category: Category?
+    /// вместо categoryId: связь на Category (опционально)
+    @Relationship var category: Category?
 
-    /// inverse связь на факты оплат (PaymentOccurence)
+    /// inverse связь на факты оплат (PaymentOccurrence)
     @Relationship(deleteRule: .cascade, inverse: \PaymentOccurrence.entry)
     var occurrences: [PaymentOccurrence] = []
+
+    // MARK: - Computed
 
     var type: PaymentType {
         get { PaymentType(rawValue: typeRaw) ?? .bill }
@@ -39,20 +42,17 @@ final class PaymentEntry {
     }
 
     var repeatRule: RepeatRule? {
-        get {
-            guard let repeatRuleRaw else { return nil }
-            return RepeatRule(rawValue: repeatRuleRaw)
-        }
-        set {
-            repeatRuleRaw = newValue?.rawValue
-        }
+        get { repeatRuleRaw.flatMap { RepeatRule(rawValue: $0) } }
+        set { repeatRuleRaw = newValue?.rawValue }
     }
+
+    // MARK: - Init
 
     init(
         id: UUID = UUID(),
         title: String,
         amountMinor: Int64,
-        currencyCode: String,
+        currency: Currency,
         type: PaymentType,
         category: Category?,
         dueDate: Date,
@@ -65,7 +65,7 @@ final class PaymentEntry {
         self.id = id
         self.title = title
         self.amountMinor = amountMinor
-        self.currencyCode = currencyCode
+        self.currency = currency
         self.typeRaw = type.rawValue
         self.category = category
         self.dueDate = dueDate
