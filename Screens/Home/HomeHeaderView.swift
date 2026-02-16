@@ -41,6 +41,6 @@ struct HomeHeaderView: View {
         .padding(.bottom, 24)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color(red: 0.12, green: 0.29, blue: 1.0)) // как в RN: #1f4bff
-        .clipShape(RoundedRectangle(cornerRadius: 32, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 38, style: .continuous))
     }
 }

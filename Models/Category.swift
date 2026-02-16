@@ -13,7 +13,7 @@ final class Category {
     var updatedAt: Date
 
     // inverse связь (не обязателен, но удобно)
-    @Relationship(deleteRule: .nullify, inverse: \PaymentEntry.category)
+    @Relationship(deleteRule: .cascade, inverse: \PaymentEntry.category)
     var entries: [PaymentEntry] = []
 
     init(

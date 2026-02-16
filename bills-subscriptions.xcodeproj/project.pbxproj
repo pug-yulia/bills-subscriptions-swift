@@ -55,6 +55,16 @@
 			path = Services;
 			sourceTree = "<group>";
 		};
+		8F73DF702F4346AE006EE125 /* Utils */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Utils;
+			sourceTree = "<group>";
+		};
+		8F9CAAD82F43489900394B9D /* Views */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Views;
+			sourceTree = "<group>";
+		};
 		8FEC2DF52F338DBC00661030 /* bills-subscriptions */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = "bills-subscriptions";
@@ -100,6 +110,8 @@
 		8FEC2DEA2F338DBC00661030 = {
 			isa = PBXGroup;
 			children = (
+				8F9CAAD82F43489900394B9D /* Views */,
+				8F73DF702F4346AE006EE125 /* Utils */,
 				8F1E1A982F3DFD9100695EB8 /* Documentation */,
 				8F1E1A972F3DFD8100695EB8 /* ViewModels */,
 				8F1E1A962F3DFD4C00695EB8 /* Screens */,
@@ -143,6 +155,8 @@
 				8F1E1A982F3DFD9100695EB8 /* Documentation */,
 				8F4ED9762F3A0CC7005EFA0A /* Models */,
 				8F4ED98B2F3A1731005EFA0A /* Services */,
+				8F73DF702F4346AE006EE125 /* Utils */,
+				8F9CAAD82F43489900394B9D /* Views */,
 				8FEC2DF52F338DBC00661030 /* bills-subscriptions */,
 			);
 			name = "bills-subscriptions";

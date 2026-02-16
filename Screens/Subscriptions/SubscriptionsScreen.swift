@@ -44,12 +44,11 @@ struct SubscriptionsScreen: View {
                     VStack(spacing: 10) {
                         ForEach(filteredSubs) { entry in
                             let rule = (entry.repeatRuleRaw ?? "monthly")
-
                             HomeRowItemView(
                                 iconSystemName: "repeat",
                                 title: entry.title,
                                 subtitle: ruleTitle(rule),
-                                rightText: "\(formatMoneyMinor(entry.amountMinor, currencyCode: entry.currencyCode)) /\(ruleSuffix(rule))"
+                                rightText: "\(Money.formatMinor(entry.amountMinor, currencyCode: entry.currencyCode)) /\(ruleSuffix(rule))"
                             )
                         }
                     }
@@ -62,32 +61,27 @@ struct SubscriptionsScreen: View {
     }
 
     private var filterButtons: some View {
-        HStack(spacing: 10) {
-            ForEach(FrequencyFilter.allCases, id: \.self) { type in
-                filterButton(title: type.rawValue, type: type)
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 10) {
+                ForEach(FrequencyFilter.allCases, id: \.self) { type in
+                    PillButton(
+                        title: type.rawValue,
+                        isSelected: selectedFilter == type,
+                        action: { selectedFilter = type }
+                    )
+                }
             }
         }
     }
 
-    private func filterButton(title: String, type: FrequencyFilter) -> some View {
-        Button {
-            selectedFilter = type
-        } label: {
-            Text(title)
-                .font(.subheadline)
-                .padding(.vertical, 8)
-                .padding(.horizontal, 12)
-                .background(selectedFilter == type ? Color.blue : Color.gray.opacity(0.2))
-                .foregroundStyle(selectedFilter == type ? .white : .primary)
-                .clipShape(Capsule())
-        }
-    }
-
     private var filteredSubs: [PaymentEntry] {
-        guard let rule = selectedFilter.rawRule else {
-            return subs
-        }
-        return subs.filter { ($0.repeatRuleRaw ?? "monthly") == rule }
+        // repeatRuleRaw optional, но у нас default = "monthly"
+        Filtering.byOptional(
+            subs,
+            value: selectedFilter.rawRule,
+            keyPath: \.repeatRuleRaw,
+            defaultValue: "monthly"
+        )
     }
 
     private func ruleTitle(_ raw: String) -> String {
@@ -106,19 +100,5 @@ struct SubscriptionsScreen: View {
         case "yearly": return "year"
         default: return "month"
         }
-    }
-
-    private func formatMoneyMinor(_ amountMinor: Int64, currencyCode: String) -> String {
-        let symbol: String = {
-            switch currencyCode {
-            case "USD": return "$"
-            case "RUB": return "₽"
-            case "EUR": return "€"
-            default: return currencyCode + " "
-            }
-        }()
-
-        let value = Double(amountMinor) / 100.0
-        return "\(symbol)\(String(format: "%.2f", value))"
     }
 }
