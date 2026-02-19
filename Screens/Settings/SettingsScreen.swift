@@ -2,6 +2,7 @@ import SwiftUI
 import SwiftData
 
 struct SettingsScreen: View {
+
     @Environment(\.modelContext) private var context
 
     @Query(sort: \Currency.name, order: .forward)
@@ -12,52 +13,20 @@ struct SettingsScreen: View {
 
     @State private var showResetConfirm = false
 
-    private var appSettings: AppSettings {
-        if let s = settings.first { return s }
-        // если вдруг нет — создадим на лету (один раз)
-        let s = AppSettings(preferredCurrencyCode: "USD")
-        context.insert(s)
-        try? context.save()
-        return s
-    }
-
     var body: some View {
         NavigationStack {
             List {
 
-                Section("Валюта приложения") {
-                    Text("Суммы и итоги будут автоматически пересчитаны в выбранную валюту")
-                        .font(.caption)
-                        .foregroundStyle(.gray)
-
-                    ForEach(currencies) { cur in
-                        Button {
-                            appSettings.preferredCurrencyCode = cur.code
-                            try? context.save()
-                        } label: {
-                            HStack(spacing: 12) {
-                                Image(systemName: "dollarsign.circle.fill")
-                                    .foregroundStyle(.blue)
-
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text("\(cur.name) (\(cur.code))")
-                                        .foregroundStyle(.primary)
-                                    Text("Minor unit: \(cur.minorUnit)")
-                                        .font(.caption2)
-                                        .foregroundStyle(.gray)
-                                }
-
-                                Spacer()
-
-                                if appSettings.preferredCurrencyCode == cur.code {
-                                    Image(systemName: "checkmark.circle.fill")
-                                        .foregroundStyle(.blue)
-                                }
-                            }
-                        }
+                // Валюта
+                if let setting = settings.first {
+                    CurrencySection(setting: setting, currencies: currencies)
+                } else {
+                    Section("Валюта приложения") {
+                        ProgressView()
                     }
                 }
 
+                // Сервис
                 Section("Сервис") {
                     Button(role: .destructive) {
                         showResetConfirm = true
@@ -68,25 +37,94 @@ struct SettingsScreen: View {
                             Image(systemName: "trash")
                         }
                     }
+
                     Text("Удаляет локальные данные и пересоздаёт БД (полезно после изменения схемы)")
                         .font(.caption)
                         .foregroundStyle(.gray)
                 }
 
+                // Прочее
                 Section("Прочее") {
                     Text("Дополнительные настройки будут добавлены позже")
                         .foregroundStyle(.gray)
                 }
             }
             .navigationTitle("Settings")
+            .task {
+                ensureSettingsExists()
+            }
             .alert("Пересоздать данные?", isPresented: $showResetConfirm) {
                 Button("Пересоздать", role: .destructive) {
-                    do { try DatabaseSeeder.resetAndSeed(context: context) }
-                    catch { print("Reset+Seed error:", error) }
+                    do {
+                        try DatabaseSeeder.resetAndSeed(context: context)
+                    } catch {
+                        print("Reset+Seed error:", error)
+                    }
                 }
-                Button("Отмена", role: .cancel) {}
+                Button("Отмена", role: .cancel) { }
             } message: {
                 Text("Все категории и записи будут удалены и созданы заново.")
+            }
+        }
+    }
+
+    // MARK: - Settings bootstrap
+
+    @MainActor
+    private func ensureSettingsExists() {
+        if settings.isEmpty {
+            let s = AppSettings(preferredCurrencyCode: "USD")
+            context.insert(s)
+            do {
+                try context.save()
+                print("✅ AppSettings created")
+            } catch {
+                print("❌ Failed to save AppSettings:", error)
+            }
+        }
+    }
+}
+
+private struct CurrencySection: View {
+
+    @Bindable var setting: AppSettings
+    let currencies: [Currency]
+
+    var body: some View {
+        Section("Валюта приложения") {
+
+            Text("Суммы и итоги будут автоматически пересчитаны в выбранную валюту")
+                .font(.caption)
+                .foregroundStyle(.gray)
+
+            ForEach(currencies) { cur in
+                Button {
+                    setting.preferredCurrencyCode = cur.code
+                } label: {
+                    HStack(spacing: 12) {
+
+                        Image(systemName: "dollarsign.circle.fill")
+                            .foregroundStyle(.blue)
+
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("\(cur.name) (\(cur.code))")
+                                .foregroundStyle(.primary)
+
+                            Text("Minor unit: \(cur.minorUnit)")
+                                .font(.caption2)
+                                .foregroundStyle(.gray)
+                        }
+
+                        Spacer()
+
+                        if setting.preferredCurrencyCode == cur.code {
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundStyle(.blue)
+                        }
+                    }
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
             }
         }
     }

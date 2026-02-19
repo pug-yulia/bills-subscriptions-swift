@@ -3,11 +3,14 @@ import SwiftData
 
 @Model
 final class AppSettings {
-    @Attribute(.unique) var id: Int
+
+    @Attribute(.unique)
+    var id: UUID
+
     var preferredCurrencyCode: String
 
-    init(id: Int = 1, preferredCurrencyCode: String = "USD") {
-        self.id = id
+    init(preferredCurrencyCode: String = "USD") {
+        self.id = UUID()
         self.preferredCurrencyCode = preferredCurrencyCode
     }
 }

@@ -44,7 +44,9 @@ struct SubscriptionsScreen: View {
                     PaymentEntriesListView(
                         entries: filteredSubs,
                         emptyText: "No bills found",
-                        iconProvider: { _ in "bolt.fill" },
+                        iconProvider: { entry in
+                            entry.category?.icon ?? "questionmark.circle"
+                           },
                         subtitleProvider: { $0.category?.name ?? "—" }
                     )
                 }

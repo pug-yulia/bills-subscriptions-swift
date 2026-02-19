@@ -15,11 +15,15 @@ struct bills_subscriptionsApp: App {
             //HomeScreen()
             //ContentView()
         }
-        .modelContainer(for:[
+        .modelContainer(for: [
             Category.self,
             PaymentEntry.self,
-            PaymentOccurrence.self
+            PaymentOccurrence.self,
+            Currency.self,
+            ExchangeRate.self,
+            AppSettings.self
         ])
+
         
     }
 }
