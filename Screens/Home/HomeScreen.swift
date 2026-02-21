@@ -101,14 +101,14 @@ struct HomeScreen: View {
                             .foregroundStyle(.gray)
                             .padding(.vertical, 6)
                     } else {
-                        PaymentEntriesListView(
-                            entries: upcomingBills,
-                            emptyText: "No bills found",
-                            iconProvider: { entry in
-                                entry.category?.icon ?? "questionmark.circle"
-                               },
-                            subtitleProvider: { $0.category?.name ?? "—" }
-                        )
+//                        PaymentEntriesListView(
+//                            entries: upcomingBills,
+//                            emptyText: "No bills found",
+//                            iconProvider: { entry in
+//                                entry.category?.icon ?? "questionmark.circle"
+//                               },
+//                            subtitleProvider: { $0.category?.name ?? "—" }
+//                        )
                     }
 
                     // Active Subscriptions
@@ -122,14 +122,14 @@ struct HomeScreen: View {
                             .foregroundStyle(.gray)
                             .padding(.vertical, 6)
                     } else {
-                        PaymentEntriesListView(
-                            entries: activeSubscriptions,
-                            emptyText: "No bills found",
-                            iconProvider: { entry in
-                                   entry.category?.icon ?? "questionmark.circle"
-                               },
-                            subtitleProvider: { $0.category?.name ?? "—" }
-                        )
+//                        PaymentEntriesListView(
+//                            entries: activeSubscriptions,
+//                            emptyText: "No bills found",
+//                            iconProvider: { entry in
+//                                   entry.category?.icon ?? "questionmark.circle"
+//                               },
+//                            subtitleProvider: { $0.category?.name ?? "—" }
+//                        )
                     }
                 }
                 .padding(.horizontal, 16)

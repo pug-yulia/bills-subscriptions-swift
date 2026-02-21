@@ -2,7 +2,7 @@ import SwiftUI
 import SwiftData
 
 struct BillsScreen: View {
-
+    @Environment(\.modelContext) private var context
     // MARK: - Category filter
 
     enum CategoryFilter: Equatable {
@@ -48,41 +48,79 @@ struct BillsScreen: View {
         order: .forward
     )
     private var bills: [PaymentEntry]
-
     // Categories for filter bar
     @Query(sort: \Category.name, order: .forward)
     private var categories: [Category]
 
     @State private var selectedCategory: CategoryFilter = .all
     @State private var selectedDate: DateFilter = .all
+    @State private var entryToDelete: PaymentEntry?
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 14) {
-
+        List {
+            // Фильтры как строки списка (чтобы List оставался основным контейнером и swipe работал)
+            Section {
                 categoryFilterBar
-                dateFilterBar
+                    .listRowInsets(EdgeInsets(top: 12, leading: 0, bottom: 6, trailing: 0))
+                    .listRowSeparator(.hidden)
 
+                dateFilterBar
+                    .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 12, trailing: 0))
+                    .listRowSeparator(.hidden)
+            }
+
+            // Сами счета
+            Section {
                 if filteredBills.isEmpty {
                     Text("No bills found")
                         .foregroundStyle(.gray)
-                        .padding(.top, 40)
+                        .listRowSeparator(.hidden)
                 } else {
                     PaymentEntriesListView(
                         entries: filteredBills,
-                        emptyText: "No bills found",
-                        iconProvider: { entry in
-                            entry.category?.icon ?? "questionmark.circle"
-                           },
-                        subtitleProvider: { $0.category?.name ?? "—" }
+                        iconProvider: { $0.category?.icon ?? "questionmark.circle" },
+                        subtitleProvider: { $0.category?.name ?? "—" },
+                        onDelete: { entry in
+                            entryToDelete = entry
+                        },
+                        onEdit: { entry in
+                            // TODO: редактирование позже
+                            print("EDIT tapped: \(entry.id)")
+                        }
                     )
                 }
             }
-            .padding(.horizontal, 16)
-            .padding(.top, 20)
         }
+        .listStyle(.plain)
+        .scrollContentBackground(.hidden)
         .navigationTitle("Bills")
+        .alert("Удалить платёж?", isPresented: Binding(
+            get: { entryToDelete != nil },
+            set: { if !$0 { entryToDelete = nil } }
+        )) {
+            Button("Удалить", role: .destructive) {
+                if let e = entryToDelete {
+                    deleteEntry(e)
+                }
+                entryToDelete = nil
+            }
+            Button("Отмена", role: .cancel) {
+                entryToDelete = nil
+            }
+        }
+
+        
     }
+    
+    private func deleteEntry(_ entry: PaymentEntry) {
+           context.delete(entry)
+           do {
+               try context.save()
+           } catch {
+               print("Failed to delete entry: \(error)")
+           }
+       }
+
 
     // MARK: - Bars
 

@@ -11,7 +11,7 @@ struct SubscriptionsScreen: View {
         case yearly = "Yearly"
 
         var rawRule: String? {
-            switch self {
+            switch self {   
             case .all: return nil
             case .daily: return "daily"
             case .weekly: return "weekly"
@@ -41,14 +41,14 @@ struct SubscriptionsScreen: View {
                         .foregroundStyle(.gray)
                         .padding(.top, 40)
                 } else {
-                    PaymentEntriesListView(
-                        entries: filteredSubs,
-                        emptyText: "No bills found",
-                        iconProvider: { entry in
-                            entry.category?.icon ?? "questionmark.circle"
-                           },
-                        subtitleProvider: { $0.category?.name ?? "—" }
-                    )
+//                    PaymentEntriesListView(
+//                        entries: filteredSubs,
+//                        emptyText: "No bills found",
+//                        iconProvider: { entry in
+//                            entry.category?.icon ?? "questionmark.circle"
+//                           },
+//                        subtitleProvider: { $0.category?.name ?? "—" }
+//                    )
                 }
             }
             .padding(.horizontal, 16)
