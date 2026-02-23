@@ -2,16 +2,18 @@ import SwiftUI
 import SwiftData
 
 struct SubscriptionsScreen: View {
-
+    
+    @Environment(\.modelContext) private var context
+    
     enum FrequencyFilter: String, CaseIterable, Equatable {
         case all = "All"
         case daily = "Daily"
         case weekly = "Weekly"
         case monthly = "Monthly"
         case yearly = "Yearly"
-
+        
         var rawRule: String? {
-            switch self {   
+            switch self {
             case .all: return nil
             case .daily: return "daily"
             case .weekly: return "weekly"
@@ -20,43 +22,84 @@ struct SubscriptionsScreen: View {
             }
         }
     }
-
+    
     @Query(
         filter: #Predicate<PaymentEntry> { $0.typeRaw == "subscription" },
         sort: \PaymentEntry.dueDate,
         order: .forward
     )
     private var subs: [PaymentEntry]
-
+    
     @State private var selectedFilter: FrequencyFilter = .all
-
+    @State private var entryToDelete: PaymentEntry?
+    
     var body: some View {
-        ScrollView {
-            VStack(spacing: 16) {
-
+        List {
+            
+            // Фильтры other
+            Section {
                 filterButtons
-
+                    .listRowInsets(EdgeInsets(top: 12, leading: 0, bottom: 12, trailing: 0))
+                    .listRowSeparator(.hidden)
+            }
+            
+            // Сами subs
+            Section {
                 if filteredSubs.isEmpty {
-                    Text("No subscriptions yet")
+                    Text("No subs found")
                         .foregroundStyle(.gray)
-                        .padding(.top, 40)
+                        .listRowSeparator(.hidden)
                 } else {
-//                    PaymentEntriesListView(
-//                        entries: filteredSubs,
-//                        emptyText: "No bills found",
-//                        iconProvider: { entry in
-//                            entry.category?.icon ?? "questionmark.circle"
-//                           },
-//                        subtitleProvider: { $0.category?.name ?? "—" }
-//                    )
+                    PaymentEntriesListView(
+                        entries: filteredSubs,
+                        iconProvider: { $0.category?.icon ?? "questionmark.circle" },
+                        subtitleProvider: {  ruleTitle($0.repeatRuleRaw ?? "monthly") },
+                        onDelete: { entry in
+                            entryToDelete = entry
+                        },
+                        onEdit: { entry in
+                            // TODO: редактирование позже
+                            print("EDIT tapped: \(entry.id)")
+                        }
+                    )
                 }
             }
-            .padding(.horizontal, 16)
-            .padding(.top, 20)
+            
         }
+        .listStyle(.plain)
+        .scrollContentBackground(.hidden)
         .navigationTitle("Subscriptions")
+        
+        //altert
+        .alert("Удалить подписку?", isPresented: Binding(
+            get: { entryToDelete != nil },
+            set: { if !$0 { entryToDelete = nil } }
+        )) {
+            Button("Удалить", role: .destructive) {
+                if let e = entryToDelete {
+                    deleteEntry(e)
+                }
+                entryToDelete = nil
+            }
+            Button("Отмена", role: .cancel) {
+                entryToDelete = nil
+            }
+        }
+        
     }
-
+    
+    private func deleteEntry(_ entry: PaymentEntry) {
+        context.delete(entry)
+        do {
+            try context.save()
+        } catch {
+            print("Failed to delete entry: \(error)")
+        }
+    }
+    
+    
+    
+    
     private var filterButtons: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 10) {
@@ -70,7 +113,7 @@ struct SubscriptionsScreen: View {
             }
         }
     }
-
+    
     private var filteredSubs: [PaymentEntry] {
         // repeatRuleRaw optional, но у нас default = "monthly"
         Filtering.byOptional(
@@ -80,7 +123,7 @@ struct SubscriptionsScreen: View {
             defaultValue: "monthly"
         )
     }
-
+    
     private func ruleTitle(_ raw: String) -> String {
         switch raw {
         case "daily": return "daily"
@@ -89,7 +132,7 @@ struct SubscriptionsScreen: View {
         default: return "monthly"
         }
     }
-
+    
     private func ruleSuffix(_ raw: String) -> String {
         switch raw {
         case "daily": return "day"

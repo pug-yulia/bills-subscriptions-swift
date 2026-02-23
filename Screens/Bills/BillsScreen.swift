@@ -55,7 +55,9 @@ struct BillsScreen: View {
     @State private var selectedCategory: CategoryFilter = .all
     @State private var selectedDate: DateFilter = .all
     @State private var entryToDelete: PaymentEntry?
-
+    @State private var entryToEdit: PaymentEntry?
+    @State private var showEditPayment = false
+    
     var body: some View {
         List {
             // Фильтры как строки списка (чтобы List оставался основным контейнером и swipe работал)
@@ -84,8 +86,8 @@ struct BillsScreen: View {
                             entryToDelete = entry
                         },
                         onEdit: { entry in
-                            // TODO: редактирование позже
-                            print("EDIT tapped: \(entry.id)")
+                            entryToEdit = entry
+                            showEditPayment = true
                         }
                     )
                 }
@@ -108,6 +110,16 @@ struct BillsScreen: View {
                 entryToDelete = nil
             }
         }
+         .sheet(isPresented: $showEditPayment, onDismiss: {
+            entryToEdit = nil
+        }) {
+        // На всякий случай: если по какой-то причине nil — откроем create
+        if let e = entryToEdit {
+            PaymentFormScreen(mode: .edit(e))
+        } else {
+            PaymentFormScreen(mode: .create(defaultType: .bill))
+        }
+    }
 
         
     }

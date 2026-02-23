@@ -12,6 +12,15 @@ struct TabsScreen: View {
     @State private var selectedTab: Tab = .home
     @State private var showAddPayment = false
 
+    private var defaultTypeForCurrentTab: PaymentType {
+        switch selectedTab {
+        case .subscriptions:
+            return .subscription
+        default:
+            return .bill
+        }
+    }
+
     var body: some View {
         ZStack(alignment: .bottom) {
 
@@ -42,7 +51,6 @@ struct TabsScreen: View {
                 .tag(Tab.settings)
             }
 
-            // Центральная синяя кнопка
             Button {
                 showAddPayment = true
             } label: {
@@ -54,10 +62,10 @@ struct TabsScreen: View {
                     .clipShape(Circle())
                     .shadow(color: .black.opacity(0.25), radius: 8, y: 4)
             }
-            .offset(y: -20) // выпирает вверх
+            .offset(y: -20)
         }
         .sheet(isPresented: $showAddPayment) {
-            AddPaymentScreen()
+            PaymentFormScreen(mode: .create(defaultType: defaultTypeForCurrentTab))
         }
     }
 }
