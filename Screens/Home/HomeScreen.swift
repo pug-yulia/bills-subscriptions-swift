@@ -87,6 +87,8 @@ struct HomeScreen: View {
                     totalThisMonthText: headerTotalText(),
                     upcomingBillsText: headerUpcomingText()
                 )
+
+                
                 
                 VStack(alignment: .leading, spacing: 18) {
                     
@@ -106,17 +108,10 @@ struct HomeScreen: View {
                             entries: upcomingBills,
                             iconProvider: { $0.category?.icon ?? "questionmark.circle" },
                             subtitleProvider: { $0.category?.name ?? "—" },
-                            onDelete: { _ in },   //?
-                            onEdit: { _ in }   //?
+                            onDelete: { _ in },
+                            onEdit: { _ in },
+                            swipeEnabled: false
                         )
-                        //                        PaymentEntriesListView(
-                        //                            entries: upcomingBills,
-                        //                            emptyText: "No bills found",
-                        //                            iconProvider: { entry in
-                        //                                entry.category?.icon ?? "questionmark.circle"
-                        //                               },
-                        //                            subtitleProvider: { $0.category?.name ?? "—" }
-                        //                        )
                         
                         
                     }
@@ -137,17 +132,10 @@ struct HomeScreen: View {
                             entries: activeSubscriptions,
                             iconProvider: { $0.category?.icon ?? "questionmark.circle" },
                             subtitleProvider: { ruleToUnit($0.repeatRuleRaw ?? "monthly") },
-                            onDelete: { _ in },   //?
-                            onEdit: { _ in }   //?
+                            onDelete: { _ in },
+                            onEdit: { _ in },
+                            swipeEnabled: true
                         )
-                        //                        PaymentEntriesListView(
-                        //                            entries: activeSubscriptions,
-                        //                            emptyText: "No bills found",
-                        //                            iconProvider: { entry in
-                        //                                   entry.category?.icon ?? "questionmark.circle"
-                        //                               },
-                        //                            subtitleProvider: { $0.category?.name ?? "—" }
-                        //                        )
                     }
                 }
                 .padding(.horizontal, 16)

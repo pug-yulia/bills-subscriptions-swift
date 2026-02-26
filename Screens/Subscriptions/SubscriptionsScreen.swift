@@ -32,7 +32,8 @@ struct SubscriptionsScreen: View {
     
     @State private var selectedFilter: FrequencyFilter = .all
     @State private var entryToDelete: PaymentEntry?
-    
+    @State private var entryToEdit: PaymentEntry?
+
     var body: some View {
         List {
             
@@ -54,13 +55,8 @@ struct SubscriptionsScreen: View {
                         entries: filteredSubs,
                         iconProvider: { $0.category?.icon ?? "questionmark.circle" },
                         subtitleProvider: {  ruleTitle($0.repeatRuleRaw ?? "monthly") },
-                        onDelete: { entry in
-                            entryToDelete = entry
-                        },
-                        onEdit: { entry in
-                            // TODO: редактирование позже
-                            print("EDIT tapped: \(entry.id)")
-                        }
+                        onDelete: { entryToDelete = $0 },
+                        onEdit: { entryToEdit = $0 }
                     )
                 }
             }
@@ -68,22 +64,21 @@ struct SubscriptionsScreen: View {
         }
         .listStyle(.plain)
         .scrollContentBackground(.hidden)
-        .navigationTitle("Subscriptions")
-        
-        //altert
-        .alert("Удалить подписку?", isPresented: Binding(
+        .navigationTitle("Subscriptions")     
+        .alert("Удалить платёж?", isPresented: Binding(
             get: { entryToDelete != nil },
             set: { if !$0 { entryToDelete = nil } }
         )) {
             Button("Удалить", role: .destructive) {
-                if let e = entryToDelete {
-                    deleteEntry(e)
-                }
+                if let e = entryToDelete { deleteEntry(e) }
                 entryToDelete = nil
             }
             Button("Отмена", role: .cancel) {
                 entryToDelete = nil
             }
+        }
+        .sheet(item: $entryToEdit) { e in
+            PaymentFormScreen(mode: .edit(e))
         }
         
     }

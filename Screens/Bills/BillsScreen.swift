@@ -56,7 +56,6 @@ struct BillsScreen: View {
     @State private var selectedDate: DateFilter = .all
     @State private var entryToDelete: PaymentEntry?
     @State private var entryToEdit: PaymentEntry?
-    @State private var showEditPayment = false
     
     var body: some View {
         List {
@@ -82,13 +81,8 @@ struct BillsScreen: View {
                         entries: filteredBills,
                         iconProvider: { $0.category?.icon ?? "questionmark.circle" },
                         subtitleProvider: { $0.category?.name ?? "—" },
-                        onDelete: { entry in
-                            entryToDelete = entry
-                        },
-                        onEdit: { entry in
-                            entryToEdit = entry
-                            showEditPayment = true
-                        }
+                        onDelete: { entryToDelete = $0 },
+                        onEdit: { entryToEdit = $0 }
                     )
                 }
             }
@@ -110,16 +104,11 @@ struct BillsScreen: View {
                 entryToDelete = nil
             }
         }
-         .sheet(isPresented: $showEditPayment, onDismiss: {
-            entryToEdit = nil
-        }) {
-        // На всякий случай: если по какой-то причине nil — откроем create
-        if let e = entryToEdit {
+        .sheet(item: $entryToEdit, onDismiss: {
+        entryToEdit = nil
+        }) { e in
             PaymentFormScreen(mode: .edit(e))
-        } else {
-            PaymentFormScreen(mode: .create(defaultType: .bill))
         }
-    }
 
         
     }
