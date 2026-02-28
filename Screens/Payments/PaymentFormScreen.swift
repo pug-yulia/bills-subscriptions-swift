@@ -74,28 +74,78 @@ struct PaymentFormScreen: View {
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 16) {
+            ZStack {
 
-                    typeSection
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 16) {
 
-                    textField("Name", text: $title)
+                        typeSection
+                        textField("Name", text: $title)
+                        textField("Amount", text: $amount, keyboard: .decimalPad)
+                        detailsSection
+                        dateSection
 
-                    textField("Amount", text: $amount, keyboard: .decimalPad)
+                        if type == .subscription {
+                            repeatSection
+                        }
 
-                    detailsSection
-
-                    dateSection
-
-                    if type == .subscription {
-                        repeatSection
+                        noteSection
+                        saveButton
                     }
-
-                    noteSection
-
-                    saveButton
+                    .padding(16)
                 }
-                .padding(16)
+
+                // MARK: Floating Calendar Overlay (no first-open resize jump)
+
+Color.black
+    .opacity(showDatePicker ? 0.4 : 0)
+    .ignoresSafeArea()
+    .animation(.easeInOut(duration: 0.18), value: showDatePicker)
+    .onTapGesture {
+        withAnimation(.easeInOut(duration: 0.18)) {
+            showDatePicker = false
+        }
+    }
+    .allowsHitTesting(showDatePicker)
+
+VStack(spacing: 16) {
+
+    DatePicker(
+        "Select Date",
+        selection: $dueDate,
+        displayedComponents: .date
+    )
+    .datePickerStyle(.graphical)
+    .padding()
+    .background(
+        RoundedRectangle(cornerRadius: 20)
+            .fill(Color(.systemBackground))
+    )
+    .shadow(radius: 20)
+    // фиксируем ширину, чтобы не было перепрыгиваний из-за измерения контента
+    .frame(maxWidth: 420)
+    .padding(.horizontal, 16)
+
+    Button {
+        withAnimation(.easeInOut(duration: 0.18)) {
+            showDatePicker = false
+        }
+    } label: {
+        Text("Close")
+            .fontWeight(.semibold)
+            .foregroundColor(.white)
+            .padding(.vertical, 10)
+            .padding(.horizontal, 28)
+            .background(Color.blue)
+            .clipShape(Capsule())
+    }
+}
+.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+.opacity(showDatePicker ? 1 : 0)
+.scaleEffect(showDatePicker ? 1 : 0.98, anchor: .center)
+.animation(.spring(response: 0.28, dampingFraction: 0.9), value: showDatePicker)
+.allowsHitTesting(showDatePicker)
+.zIndex(10)
             }
             .navigationTitle(screenTitle)
             .toolbar {
@@ -201,7 +251,9 @@ struct PaymentFormScreen: View {
             Text("Date").font(.headline)
 
             Button {
-                showDatePicker.toggle()
+                withAnimation {
+                    showDatePicker = true
+                }
             } label: {
                 HStack {
                     Text(dueDate.formatted(date: .abbreviated, time: .omitted))
@@ -215,14 +267,8 @@ struct PaymentFormScreen: View {
                         .stroke(Color.gray.opacity(0.4))
                 )
             }
-
-            if showDatePicker {
-                DatePicker("", selection: $dueDate, displayedComponents: .date)
-                    .datePickerStyle(.graphical)
-            }
         }
     }
-
     private var repeatSection: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Repeat").font(.headline)

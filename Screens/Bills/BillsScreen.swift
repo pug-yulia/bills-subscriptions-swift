@@ -56,6 +56,7 @@ struct BillsScreen: View {
     @State private var selectedDate: DateFilter = .all
     @State private var entryToDelete: PaymentEntry?
     @State private var entryToEdit: PaymentEntry?
+    @State private var sortAscending: Bool = true
     
     var body: some View {
         List {
@@ -82,7 +83,8 @@ struct BillsScreen: View {
                         iconProvider: { $0.category?.icon ?? "questionmark.circle" },
                         subtitleProvider: { $0.category?.name ?? "—" },
                         onDelete: { entryToDelete = $0 },
-                        onEdit: { entryToEdit = $0 }
+                        onEdit: { entryToEdit = $0 },
+                        dayAscending: sortAscending
                     )
                 }
             }
@@ -90,6 +92,17 @@ struct BillsScreen: View {
         .listStyle(.plain)
         .scrollContentBackground(.hidden)
         .navigationTitle("Bills")
+.toolbar {
+    ToolbarItem(placement: .navigationBarTrailing) {
+        Button {
+            sortAscending.toggle()
+        } label: {
+            Image(systemName: "arrow.up")
+                .rotationEffect(.degrees(sortAscending ? 0 : 180))
+        }
+        .accessibilityLabel(sortAscending ? "Sort: oldest first" : "Sort: newest first")
+    }
+}
         .alert("Удалить платёж?", isPresented: Binding(
             get: { entryToDelete != nil },
             set: { if !$0 { entryToDelete = nil } }
@@ -165,10 +178,14 @@ struct BillsScreen: View {
 
     // MARK: - Filtering
 
-    private var filteredBills: [PaymentEntry] {
-        let afterCategory = filterByCategory(bills)
-        return filterByDate(afterCategory)
+private var filteredBills: [PaymentEntry] {
+    let afterCategory = filterByCategory(bills)
+    let afterDate = filterByDate(afterCategory)
+
+    return afterDate.sorted {
+        sortAscending ? ($0.dueDate < $1.dueDate) : ($0.dueDate > $1.dueDate)
     }
+}
 
     private func filterByCategory(_ source: [PaymentEntry]) -> [PaymentEntry] {
         switch selectedCategory {

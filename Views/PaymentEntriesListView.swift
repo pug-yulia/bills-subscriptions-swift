@@ -10,7 +10,11 @@ struct PaymentEntriesListView: View {
     var onEdit: (PaymentEntry) -> Void
 
     var swipeEnabled: Bool = true
+    var dayAscending: Bool = true
 
+    var sort: (PaymentEntry, PaymentEntry) -> Bool = {
+        $0.dueDate < $1.dueDate
+    }
     private let calendar = Calendar.current
 
     var body: some View {
@@ -29,12 +33,15 @@ struct PaymentEntriesListView: View {
     // MARK: - Grouping
 
     private var groupedDays: [(day: Date, entries: [PaymentEntry])] {
-        let dict = Dictionary(grouping: entries) { entry in
+        let sortedEntries = entries.sorted(by: sort)
+
+
+        let dict = Dictionary(grouping: sortedEntries) { entry in
             calendar.startOfDay(for: entry.dueDate)
         }
 
         // сортируем дни по возрастанию
-        let daysSorted = dict.keys.sorted()
+        let daysSorted = dict.keys.sorted(by: dayAscending ? (<) : (>))
 
         // внутри дня — тоже отсортируем по dueDate
         return daysSorted.map { day in
