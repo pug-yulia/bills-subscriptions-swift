@@ -47,7 +47,7 @@ struct SubscriptionsScreen: View {
             // Сами subs
             Section {
                 if filteredSubs.isEmpty {
-                    Text("No subs found")
+                    Text("No subscriptions found")
                         .foregroundStyle(.gray)
                         .listRowSeparator(.hidden)
                 } else {
@@ -65,15 +65,15 @@ struct SubscriptionsScreen: View {
         .listStyle(.plain)
         .scrollContentBackground(.hidden)
         .navigationTitle("Subscriptions")     
-        .alert("Удалить платёж?", isPresented: Binding(
+        .alert("Delete payment?", isPresented: Binding(
             get: { entryToDelete != nil },
             set: { if !$0 { entryToDelete = nil } }
         )) {
-            Button("Удалить", role: .destructive) {
+            Button("Delete", role: .destructive) {
                 if let e = entryToDelete { deleteEntry(e) }
                 entryToDelete = nil
             }
-            Button("Отмена", role: .cancel) {
+            Button("Cancel", role: .cancel) {
                 entryToDelete = nil
             }
         }

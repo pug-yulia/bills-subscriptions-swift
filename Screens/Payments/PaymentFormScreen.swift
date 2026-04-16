@@ -161,7 +161,7 @@ VStack(spacing: 16) {
             .onAppear {
                 applyCreateDefaultsIfNeeded()
             }
-            .alert("Ошибка", isPresented: $showValidationAlert) {
+            .alert("Error", isPresented: $showValidationAlert) {
                 Button("OK", role: .cancel) { }
             } message: {
                 Text(validationMessage)
@@ -365,17 +365,17 @@ VStack(spacing: 16) {
     private func save() {
         let trimmedTitle = title.trimmingCharacters(in: .whitespacesAndNewlines)
         if trimmedTitle.isEmpty {
-            fail("Введите название (Name).")
+            fail("Enter name")
             return
         }
 
         guard let currency = selectedCurrency else {
-            fail("Выберите валюту (Currency).")
+            fail("Choose currency")
             return
         }
 
         guard let amountMinor = Self.parseUserAmountToMinor(amount, minorUnit: currency.minorUnit) else {
-            fail("Введите корректную сумму (Amount).")
+            fail("Enter amount")
             return
         }
 
@@ -414,7 +414,7 @@ VStack(spacing: 16) {
                 dismiss()
             }
         } catch {
-            fail("Не удалось сохранить: \(error.localizedDescription)")
+            fail("Failed to save: \(error.localizedDescription)")
         }
     }
 

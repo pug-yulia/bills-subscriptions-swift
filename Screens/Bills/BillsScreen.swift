@@ -103,17 +103,17 @@ struct BillsScreen: View {
         .accessibilityLabel(sortAscending ? "Sort: oldest first" : "Sort: newest first")
     }
 }
-        .alert("Удалить платёж?", isPresented: Binding(
+        .alert("Delete payment?", isPresented: Binding(
             get: { entryToDelete != nil },
             set: { if !$0 { entryToDelete = nil } }
         )) {
-            Button("Удалить", role: .destructive) {
+            Button("Delete", role: .destructive) {
                 if let e = entryToDelete {
                     deleteEntry(e)
                 }
                 entryToDelete = nil
             }
-            Button("Отмена", role: .cancel) {
+            Button("Cancel", role: .cancel) {
                 entryToDelete = nil
             }
         }

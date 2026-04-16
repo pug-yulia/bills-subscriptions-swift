@@ -99,7 +99,7 @@ struct HomeScreen: View {
                     )
                     
                     if upcomingBills.isEmpty {
-                        Text("Нет ближайших счетов")
+                        Text("No upcoming bills")
                             .foregroundStyle(.gray)
                             .padding(.vertical, 6)
                     } else {
@@ -123,7 +123,7 @@ struct HomeScreen: View {
                     )
                     
                     if activeSubscriptions.isEmpty {
-                        Text("Нет подписок")
+                        Text("No subscriptions")
                             .foregroundStyle(.gray)
                             .padding(.vertical, 6)
                     } else {

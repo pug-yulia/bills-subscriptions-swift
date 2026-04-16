@@ -72,11 +72,11 @@ struct PaymentEntriesListView: View {
             baseRow
                 .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                     Button(role: .destructive) { onDelete(entry) } label: {
-                        Label("Удалить", systemImage: "trash")
+                        Label("Delete", systemImage: "trash")
                     }
 
                     Button { onEdit(entry) } label: {
-                        Label("Редактировать", systemImage: "pencil")
+                        Label("Edit", systemImage: "pencil")
                     }
                     .tint(.blue)
                 }

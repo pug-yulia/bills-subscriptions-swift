@@ -21,31 +21,31 @@ struct SettingsScreen: View {
                 if let setting = settings.first {
                     CurrencySection(setting: setting, currencies: currencies)
                 } else {
-                    Section("Валюта приложения") {
+                    Section("App Currency") {
                         ProgressView()
                     }
                 }
 
                 // Сервис
-                Section("Сервис") {
+                Section("Developer Tools") {
                     Button(role: .destructive) {
                         showResetConfirm = true
                     } label: {
                         HStack {
-                            Text("Сбросить базу данных")
+                            Text("Reset Database")
                             Spacer()
                             Image(systemName: "trash")
                         }
                     }
 
-                    Text("Удаляет локальные данные и пересоздаёт БД (полезно после изменения схемы)")
+                    Text("Deletes local data and recreates the database")
                         .font(.caption)
                         .foregroundStyle(.gray)
                 }
 
                 // Прочее
-                Section("Прочее") {
-                    Text("Дополнительные настройки будут добавлены позже")
+                Section("Other") {
+                    Text("Additional settings coming soon")
                         .foregroundStyle(.gray)
                 }
             }
@@ -53,17 +53,17 @@ struct SettingsScreen: View {
             .task {
                 ensureSettingsExists()
             }
-            .alert("Пересоздать данные?", isPresented: $showResetConfirm) {
-                Button("Пересоздать", role: .destructive) {
+            .alert("Reset Database?", isPresented: $showResetConfirm) {
+                Button("Reset", role: .destructive) {
                     do {
                         try DatabaseSeeder.resetAndSeed(context: context)
                     } catch {
                         print("Reset+Seed error:", error)
                     }
                 }
-                Button("Отмена", role: .cancel) { }
+                Button("Cancel", role: .cancel) { }
             } message: {
-                Text("Все категории и записи будут удалены и созданы заново.")
+                Text("All data will be deleted and recreated.")
             }
         }
     }
@@ -91,9 +91,9 @@ private struct CurrencySection: View {
     let currencies: [Currency]
 
     var body: some View {
-        Section("Валюта приложения") {
+        Section("App Currency") {
 
-            Text("Суммы и итоги будут автоматически пересчитаны в выбранную валюту")
+            Text("Amounts will be automatically converted to the selected currency")
                 .font(.caption)
                 .foregroundStyle(.gray)
 
